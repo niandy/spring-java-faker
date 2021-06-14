@@ -2,9 +2,10 @@ plugins {
     id "java"
     id 'jacoco'
     id 'net.researchgate.release' version '2.6.0'
+    id 'maven-publish'
 }
 
-group = 'com.github.vastik'
+group = 'org.github.niandy'
 sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -30,7 +31,27 @@ jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
 }
 
+publishing {
+    publications {
+        register("jar", MavenPublication) {
+            from(components["java"])
+            pom {
+                url.set("https://github.com/niandy/spring-java-faker.git")
+            }
+        }
+    }
 
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/niandy/spring-java-faker"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
 
 release {
     preCommitText = ''
